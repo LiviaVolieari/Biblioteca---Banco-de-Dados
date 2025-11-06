@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Biblioteca{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/base.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Liberium</h1>
+        <nav>
+            <a href="{{ url_for('main_bp.index') }}">Início</a>
+            <a href="{{ url_for('livro_bp.view_livros') }}">Livros</a>
+            <a href="{{ url_for('auth_bp.login') }}">Login</a>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 - Liberium</p>
+    </footer>
+</body>
+</html>
