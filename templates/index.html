@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Bem-vindo à Atividade 17</h1>
+        <p>Escolha uma das opções abaixo:</p>
+
+        <ul>
+            <li><a href="{{ url_for('auth.login') }}">Fazer Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}">Cadastrar Usuário</a></li>
+            
+        </ul>
+    </div>
+{% endblock %}
