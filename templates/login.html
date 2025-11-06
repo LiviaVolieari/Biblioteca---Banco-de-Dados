@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Login</h2>
+    <form method="POST">
+        <label for="email">E-mail:</label>
+        <input type="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" name="senha" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+    <p>Não tem conta? <a href="{{ url_for('auth_bp.register') }}">Cadastre-se aqui</a></p>
+</div>
+{% endblock %}
+
+
+

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Criar Conta</h2>
+    <form method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" required>
+
+        <label for="email">E-mail:</label>
+        <input type="email" name="email" required>
+
+        <label for="senha">Senha:</label>
+        <input type="password" name="senha" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+    <p>Já tem conta? <a href="{{ url_for('auth_bp.login') }}">Faça login</a></p>
+</div>
+{% endblock %}
