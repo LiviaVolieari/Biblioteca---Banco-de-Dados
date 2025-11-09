@@ -21,9 +21,7 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'chave_super_segura')  # Nec
 app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', 'localhost')
 app.config['MYSQL_PORT'] = int(os.environ.get('MYSQL_PORT', 3306))
 app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', '1234')  
-
-# vazio é padrão XAMPP, defina via env se usar MySQL
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', '')  #o padrão XAMPP é vazio, se for sem coloca a senha
 app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB', 'biblioteca')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
