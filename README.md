@@ -20,29 +20,8 @@ pip install -r requirements.txt
 
 ### 2. Configure o MySQL
 
-#### Opção A: Usando XAMPP (mais fácil para desenvolvimento)
-1. Abra o XAMPP Control Panel
-2. Inicie o módulo MySQL
-3. Crie o banco de dados:
-   - Abra http://localhost/phpmyadmin
-   - Vá em "SQL" (aba superior)
-   - Cole o conteúdo de `database/schema.sql` e execute
-   - Ou via terminal do XAMPP:
-     ```powershell
-     C:\xampp\mysql\bin\mysql.exe -u root < database\schema.sql
-     ```
 
-#### Opção B: MySQL Standalone (instalação separada)
-1. Garanta que o serviço MySQL está rodando:
-   ```powershell
-   # Ver status
-   Get-Service -Name 'MySQL*'
-   
-   # Iniciar se necessário (altere MySQL80 para seu nome de serviço)
-   Start-Service -Name MySQL80
-   ```
-
-2. Crie o banco usando sua senha:
+1. Crie o banco usando sua senha:
    ```powershell
    # Se mysql está no PATH:
    mysql -u root -p < database\schema.sql
@@ -51,7 +30,7 @@ pip install -r requirements.txt
    & 'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe' -u root -p < database\schema.sql
    ```
 
-3. Configure a senha do MySQL (escolha um método):
+2. Configure a senha do MySQL (escolha um método):
    - **Temporário** (só na sessão atual do PowerShell):
      ```powershell
      $env:MYSQL_PASSWORD = "sua_senha_aqui"
