@@ -10,25 +10,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 
-CREATE TABLE IF NOT EXISTS livros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(255) NOT NULL,
-    autor VARCHAR(255) NOT NULL,
-    ano INT,
-    isbn VARCHAR(20),
-    genero VARCHAR(100),
-    editora VARCHAR(255),
-    quantidade INT DEFAULT 1,
-    resumo TEXT,
-    autor_id INT,
-    genero_id INT,
-    editora_id INT,
-    FOREIGN KEY (autor_id) REFERENCES autores(id_autor),
-    FOREIGN KEY (genero_id) REFERENCES generos(id_genero),
-    FOREIGN KEY (editora_id) REFERENCES editoras(id_editora)
-);
-
-
 CREATE TABLE IF NOT EXISTS autores (
     id_autor INT AUTO_INCREMENT PRIMARY KEY,
     nome_autor VARCHAR(255) NOT NULL,
@@ -48,6 +29,25 @@ CREATE TABLE IF NOT EXISTS editoras (
     id_editora INT AUTO_INCREMENT PRIMARY KEY,
     nome_editora VARCHAR(255) NOT NULL,
     endereco_editora TEXT
+);
+
+
+CREATE TABLE IF NOT EXISTS livros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    autor VARCHAR(255) NOT NULL,
+    ano INT,
+    isbn VARCHAR(20),
+    genero VARCHAR(100),
+    editora VARCHAR(255),
+    quantidade INT DEFAULT 1,
+    resumo TEXT,
+    autor_id INT,
+    genero_id INT,
+    editora_id INT,
+    FOREIGN KEY (autor_id) REFERENCES autores(id_autor),
+    FOREIGN KEY (genero_id) REFERENCES generos(id_genero),
+    FOREIGN KEY (editora_id) REFERENCES editoras(id_editora)
 );
 
 
