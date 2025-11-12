@@ -81,3 +81,39 @@ Acesse http://127.0.0.1:5000 no navegador.
 4. **Porta errada**
    - Padrão é 3306
    - Para mudar: `$env:MYSQL_PORT = "3307"`  # exemplo
+
+### Teste de conexão com Python
+
+Se receber "Access denied" (1045) ou erro parecido, criei um pequeno script `test_db.py`
+para testar a conexão usando as mesmas variáveis de ambiente lidas pela aplicação.
+
+1. Configure as variáveis de ambiente no PowerShell (exemplo):
+```powershell
+$env:MYSQL_HOST = '127.0.0.1'
+$env:MYSQL_PORT = '3306'
+$env:MYSQL_USER = 'root'
+$env:MYSQL_PASSWORD = 'sua_senha'
+$env:MYSQL_DB = 'biblioteca'
+```
+
+2. Rode o script:
+```powershell
+python .\test_db.py
+```
+
+O script retornará uma mensagem clara indicando se a conexão foi bem-sucedida ou a descrição do erro.
+
+### Se o erro for 1045 (Access denied)
+
+- Verifique usuário/senha; tente logar com o cliente MySQL:
+   ```powershell
+   mysql -u root -p -h 127.0.0.1 -P 3306
+   ```
+- Se não conseguir, considere criar um usuário dedicado para a aplicação:
+   ```sql
+   CREATE DATABASE IF NOT EXISTS biblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   CREATE USER 'biblioteca_user'@'localhost' IDENTIFIED BY 'senha_forte';
+   GRANT ALL PRIVILEGES ON biblioteca.* TO 'biblioteca_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+   Depois ajuste as variáveis de ambiente para usar `biblioteca_user`.
