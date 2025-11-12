@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block title %}Livros{% endblock %}
-
 {% block content %}
 <div class="container">
     <h2>Lista de Livros</h2>
@@ -10,25 +8,32 @@
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Título</th>
                 <th>Autor</th>
+                <th>Gênero</th>
+                <th>Editora</th>
                 <th>Ano</th>
+                <th>ISBN</th>
+                <th>Qtd</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for livro in livros %}
             <tr>
-                <td>{{ livro.id }}</td>
                 <td>{{ livro.titulo }}</td>
-                <td>{{ livro.autor }}</td>
+                <td>{{ livro.nome_autor }}</td>
+                <td>{{ livro.nome_genero }}</td>
+                <td>{{ livro.nome_editora }}</td>
                 <td>{{ livro.ano }}</td>
+                <td>{{ livro.isbn }}</td>
+                <td>{{ livro.quantidade }}</td>
                 <td>
-                    <a href="{{ url_for('livro_bp.edit_livro', id=livro.id) }}">Editar</a> |
+                    <a href="{{ url_for('livro_bp.edit_livro', id=livro.id) }}">Editar</a>
                     <a href="{{ url_for('livro_bp.delete_livro', id=livro.id) }}" onclick="return confirm('Tem certeza que deseja excluir este livro?')">Excluir</a>
                 </td>
             </tr>
+
             {% endfor %}
         </tbody>
     </table>

@@ -35,11 +35,8 @@ CREATE TABLE IF NOT EXISTS editoras (
 CREATE TABLE IF NOT EXISTS livros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(255) NOT NULL,
-    autor VARCHAR(255) NOT NULL,
     ano INT,
     isbn VARCHAR(20),
-    genero VARCHAR(100),
-    editora VARCHAR(255),
     quantidade INT DEFAULT 1,
     resumo TEXT,
     autor_id INT,
