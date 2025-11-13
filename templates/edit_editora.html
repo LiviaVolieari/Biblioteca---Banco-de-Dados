@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Editar Editora{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h2>Editar Editora</h2>
+    <form method="POST">
+        <label for="nome_editora">Nome da Editora:</label>
+        <input type="text" name="nome_editora" value="{{ editora.nome_editora }}" required>
+
+        <label for="endereco_editora">Endereço:</label>
+        <textarea name="endereco_editora" rows="3">{{ editora.endereco_editora }}</textarea>
+
+        <button type="submit">Atualizar</button>
+    </form>
+</div>
+{% endblock %}

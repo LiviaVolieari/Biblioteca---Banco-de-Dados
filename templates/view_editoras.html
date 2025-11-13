@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Editoras{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Lista de Editoras</h2>
+    <a href="{{ url_for('editora_bp.add_editora') }}" class="btn">+ Adicionar Editora</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Endereço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in editoras %}
+            <tr>
+                <td>{{ e.nome_editora }}</td>
+                <td>{{ e.endereco_editora or '—' }}</td>
+                <td>
+                    <a href="{{ url_for('editora_bp.edit_editora', id_editora=e.id_editora) }}">Editar</a> |
+                    <a href="{{ url_for('editora_bp.delete_editora', id_editora=e.id_editora) }}" onclick="return confirm('Tem certeza que deseja excluir esta editora?')">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
