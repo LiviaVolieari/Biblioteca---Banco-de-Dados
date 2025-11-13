@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Editar Gênero{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Editar Gênero</h2>
+    <form method="POST">
+        <label>Nome do Gênero:</label>
+        <input type="text" name="nome_genero" value="{{ genero.nome_genero }}" required>
+        <button type="submit">Atualizar</button>
+    </form>
+</div>
+{% endblock %}
