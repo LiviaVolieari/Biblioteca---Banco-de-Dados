@@ -49,7 +49,7 @@ def add_livro():
             nome_genero = request.form['genero'].strip()
             nome_editora = request.form['editora'].strip()
 
-            # 1️⃣ Autor — insere se não existir
+            # Autor — insere se não existir
             cursor.execute("SELECT id_autor FROM autores WHERE nome_autor = %s", (nome_autor,))
             autor = cursor.fetchone()
             if autor:
@@ -59,7 +59,7 @@ def add_livro():
                 mysql.connection.commit()
                 autor_id = cursor.lastrowid  # pega o id recém-criado
 
-            # 2️⃣ Gênero — insere se não existir
+            # Gênero — insere se não existir
             cursor.execute("SELECT id_genero FROM generos WHERE nome_genero = %s", (nome_genero,))
             genero = cursor.fetchone()
             if genero:
@@ -69,7 +69,7 @@ def add_livro():
                 mysql.connection.commit()
                 genero_id = cursor.lastrowid
 
-            # 3️⃣ Editora — insere se não existir
+            # Editora — insere se não existir
             cursor.execute("SELECT id_editora FROM editoras WHERE nome_editora = %s", (nome_editora,))
             editora = cursor.fetchone()
             if editora:
@@ -79,7 +79,7 @@ def add_livro():
                 mysql.connection.commit()
                 editora_id = cursor.lastrowid
 
-            # 4️⃣ Agora insere o livro com os IDs corretos
+            # Agora insere o livro com os IDs corretos
             cursor.execute("""
                 INSERT INTO livros (titulo, ano, isbn, quantidade, resumo, autor_id, genero_id, editora_id)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -149,7 +149,6 @@ def edit_livro(id):
             nome_genero = request.form['genero'].strip()
             nome_editora = request.form['editora'].strip()
 
-            # 1️⃣ Autor — cria se não existir
             cursor.execute("SELECT id_autor FROM autores WHERE nome_autor = %s", (nome_autor,))
             autor = cursor.fetchone()
             if autor:
@@ -159,7 +158,6 @@ def edit_livro(id):
                 mysql.connection.commit()
                 autor_id = cursor.lastrowid
 
-            # 2️⃣ Gênero — cria se não existir
             cursor.execute("SELECT id_genero FROM generos WHERE nome_genero = %s", (nome_genero,))
             genero = cursor.fetchone()
             if genero:
@@ -169,7 +167,6 @@ def edit_livro(id):
                 mysql.connection.commit()
                 genero_id = cursor.lastrowid
 
-            # 3️⃣ Editora — cria se não existir
             cursor.execute("SELECT id_editora FROM editoras WHERE nome_editora = %s", (nome_editora,))
             editora = cursor.fetchone()
             if editora:
@@ -179,7 +176,7 @@ def edit_livro(id):
                 mysql.connection.commit()
                 editora_id = cursor.lastrowid
 
-            # 4️⃣ Atualiza o livro
+            # Atualiza o livro
             cursor.execute("""
                 UPDATE livros
                 SET titulo = %s, ano = %s, isbn = %s, quantidade = %s, resumo = %s,

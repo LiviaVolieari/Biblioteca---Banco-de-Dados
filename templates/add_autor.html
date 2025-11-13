@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Adicionar Autor{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Adicionar Autor</h2>
+    <form method="POST">
+        <label>Nome:</label>
+        <input type="text" name="nome_autor" required>
+
+        <label>Nacionalidade:</label>
+        <input type="text" name="nacionalidade">
+
+        <label>Data de Nascimento:</label>
+        <input type="date" name="data_nascimento">
+
+        <label>Biografia:</label>
+        <textarea name="biografia" rows="4"></textarea>
+
+        <button type="submit">Salvar</button>
+    </form>
+</div>
+{% endblock %}

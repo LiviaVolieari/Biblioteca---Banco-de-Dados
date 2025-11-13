@@ -4,7 +4,7 @@ import os
 HOST = os.environ.get('MYSQL_HOST', '127.0.0.1')
 PORT = int(os.environ.get('MYSQL_PORT', 3306))
 USER = os.environ.get('MYSQL_USER', 'root')
-PASSWORD = os.environ.get('MYSQL_PASSWORD', '')
+PASSWORD = os.environ.get('MYSQL_PASSWORD', '1234')
 DB = os.environ.get('MYSQL_DB', 'biblioteca')
 
 print(f'Tentando conectar em {HOST}:{PORT} como {USER} ao DB {DB!r}')
