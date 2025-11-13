@@ -15,38 +15,6 @@ def view_usuarios():
     cursor.close()
     return render_template('view_usuarios.html', usuarios=usuarios)
 
-@usuario_bp.route('/add', methods=['GET', 'POST'])
-def add_usuario():
-    if not mysql:
-        flash('Erro: conexão com o banco de dados indisponível. Não é possível adicionar usuários.', 'danger')
-        return render_template('add_usuario.html')
-
-    if request.method == 'POST':
-        try:
-            nome = request.form['nome']
-            email = request.form['email']
-            senha = request.form['senha']
-
-            cursor = mysql.connection.cursor()
-            cursor.execute("""
-                INSERT INTO usuarios (nome, email, senha)
-                VALUES (%s, %s, %s)
-            """, (nome, email, senha))
-            mysql.connection.commit()
-            cursor.close()
-            flash('Usuário adicionado com sucesso!', 'success')
-            return redirect(url_for('usuario_bp.view_usuarios'))
-
-        except Exception as e:
-            try:
-                mysql.connection.rollback()
-            except:
-                pass
-            flash('Erro ao adicionar usuário: ' + str(e), 'danger')
-            return render_template('add_usuario.html')
-
-    return render_template('add_usuario.html')
-
 @usuario_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit_usuario(id):
     if not mysql:
