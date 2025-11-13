@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Novo Empréstimo{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Registrar Empréstimo</h2>
+    <form method="POST">
+        <label>Usuário:</label>
+        <select name="usuario_id" required>
+            {% for u in usuarios %}
+            <option value="{{ u.id }}">{{ u.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Livro:</label>
+        <select name="livro_id" required>
+            {% for l in livros %}
+            <option value="{{ l.id }}">{{ l.titulo }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Data do Empréstimo:</label>
+        <input type="date" name="data_emprestimo" required>
+
+        <label>Data de Devolução Prevista:</label>
+        <input type="date" name="data_devolucao_prevista" required>
+
+        <label>Status:</label>
+        <select name="status_emprestimo">
+            <option value="pendente">Pendente</option>
+            <option value="devolvido">Devolvido</option>
+            <option value="atrasado">Atrasado</option>
+        </select>
+
+        <button type="submit">Salvar</button>
+    </form>
+</div>
+{% endblock %}

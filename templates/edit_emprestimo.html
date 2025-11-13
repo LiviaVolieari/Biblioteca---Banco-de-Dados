@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Editar Empréstimo{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Editar Empréstimo</h2>
+    <form method="POST">
+        <label>Usuário:</label>
+        <select name="usuario_id">
+            {% for u in usuarios %}
+            <option value="{{ u.id }}" {% if u.id == emprestimo.usuario_id %}selected{% endif %}>{{ u.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Livro:</label>
+        <select name="livro_id">
+            {% for l in livros %}
+            <option value="{{ l.id }}" {% if l.id == emprestimo.livro_id %}selected{% endif %}>{{ l.titulo }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Data do Empréstimo:</label>
+        <input type="date" name="data_emprestimo" value="{{ emprestimo.data_emprestimo|safe }}" required>
+
+        <label>Data Prevista:</label>
+        <input type="date" name="data_devolucao_prevista" value="{{ emprestimo.data_devolucao_prevista|safe }}">
+
+        <label>Data Devolução Real:</label>
+        <input type="date" name="data_devolucao_real" value="{{ emprestimo.data_devolucao_real|safe }}">
+
+        <label>Status:</label>
+        <select name="status_emprestimo">
+            <option value="pendente" {% if emprestimo.status_emprestimo == 'pendente' %}selected{% endif %}>Pendente</option>
+            <option value="devolvido" {% if emprestimo.status_emprestimo == 'devolvido' %}selected{% endif %}>Devolvido</option>
+            <option value="atrasado" {% if emprestimo.status_emprestimo == 'atrasado' %}selected{% endif %}>Atrasado</option>
+        </select>
+
+        <button type="submit">Atualizar</button>
+    </form>
+</div>
+{% endblock %}

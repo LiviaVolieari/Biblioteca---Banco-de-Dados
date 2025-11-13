@@ -45,6 +45,7 @@ from controllers.livro.routes import livro_bp
 from controllers.usuario.routes import usuario_bp
 from controllers.autor.routes import autor_bp
 from controllers.genero.routes import genero_bp
+from controllers.emprestimo.routes import emprestimo_bp
 
 app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp, url_prefix='/auth')
@@ -52,3 +53,4 @@ app.register_blueprint(livro_bp, url_prefix='/livros')
 app.register_blueprint(usuario_bp, url_prefix='/usuarios')
 app.register_blueprint(autor_bp, url_prefix='/autores')
 app.register_blueprint(genero_bp, url_prefix='/generos')
+app.register_blueprint(emprestimo_bp, url_prefix='/emprestimos')
