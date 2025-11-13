@@ -1,112 +1,113 @@
-# from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-# from config import mysql
-# from werkzeug.security import generate_password_hash
-
-
-# usuario_bp = Blueprint('usuario', __name__)
-
-
-# @usuario_bp.route('/usuario', methods=['GET'])
-# def perfil_usuario():
-#     user_id = session.get('user_id')
-
-
-#     if not user_id:
-#         flash('Você precisa estar logado para acessar seu perfil.', 'warning')
-#         return redirect(url_for('login'))
-
-
-#     cursor = mysql.connection.cursor(dictionary=True)
-#     cursor.execute('SELECT * FROM usuario WHERE id = %s', (user_id,))
-#     usuario = cursor.fetchone()
-#     cursor.close()
-
-
-#     if not usuario:
-#         flash('Usuário não encontrado.', 'danger')
-#         return redirect(url_for('login'))
-
-
-#     return render_template('usuario.html', usuario=usuario)
-
-
-
-
-# @usuario_bp.route('/usuario/atualizar', methods=['POST'])
-# def atualizar_usuario():
-#     user_id = session.get('user_id')
-#     if not user_id:
-#         flash('Você precisa estar logado para atualizar suas informações.', 'warning')
-#         return redirect(url_for('login'))
-
-
-#     nome = request.form['nome']
-#     email = request.form['email']
-#     telefone = request.form.get('telefone')
-#     senha = request.form.get('senha')
-
-
-#     cursor = mysql.connection.cursor()
-
-
-#     if senha:
-#         senha_hash = generate_password_hash(senha)
-#         cursor.execute(
-#             'UPDATE usuario SET nome=%s, email=%s, telefone=%s, senha_hash=%s WHERE id=%s',
-#             (nome, email, telefone, senha_hash, user_id)
-#         )
-#     else:
-#         cursor.execute(
-#             'UPDATE usuario SET nome=%s, email=%s, telefone=%s WHERE id=%s',
-#             (nome, email, telefone, user_id)
-#         )
-
-
-#     mysql.connection.commit()
-#     cursor.close()
-
-
-#     flash('Informações atualizadas com sucesso!', 'success')
-#     return redirect(url_for('usuario.perfil_usuario'))
-
-
-
-
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from config import mysql
 
 usuario_bp = Blueprint('usuario_bp', __name__)
 
+@usuario_bp.route('/')
+def view_usuarios():
+    if not mysql:
+        flash('Atenção: conexão com o banco de dados indisponível.', 'warning')
+        return render_template('view_usuarios.html', usuarios=[])
 
-@usuario_bp.route('/', methods=['GET'])
-def usuarios():
-    """Exibe o perfil do usuário baseado na sessão.
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT id, nome, email FROM usuarios ORDER BY nome ASC;")
+    usuarios = cursor.fetchall()
+    cursor.close()
+    return render_template('view_usuarios.html', usuarios=usuarios)
 
-    Nota: o login atual armazena o nome do usuário em `session['usuario']`.
-    Aqui fazemos uma verificação simples na sessão e renderizamos o template
-    `usuario.html`. Se for necessário, pode-se reintroduzir acesso ao banco
-    para consultar dados completos do usuário pelo id.
-    """
-    usuario = session.get('usuario')
+@usuario_bp.route('/add', methods=['GET', 'POST'])
+def add_usuario():
+    if not mysql:
+        flash('Erro: conexão com o banco de dados indisponível. Não é possível adicionar usuários.', 'danger')
+        return render_template('add_usuario.html')
+
+    if request.method == 'POST':
+        try:
+            nome = request.form['nome']
+            email = request.form['email']
+            senha = request.form['senha']
+
+            cursor = mysql.connection.cursor()
+            cursor.execute("""
+                INSERT INTO usuarios (nome, email, senha)
+                VALUES (%s, %s, %s)
+            """, (nome, email, senha))
+            mysql.connection.commit()
+            cursor.close()
+            flash('Usuário adicionado com sucesso!', 'success')
+            return redirect(url_for('usuario_bp.view_usuarios'))
+
+        except Exception as e:
+            try:
+                mysql.connection.rollback()
+            except:
+                pass
+            flash('Erro ao adicionar usuário: ' + str(e), 'danger')
+            return render_template('add_usuario.html')
+
+    return render_template('add_usuario.html')
+
+@usuario_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_usuario(id):
+    if not mysql:
+        flash('Erro: conexão com o banco de dados indisponível.', 'danger')
+        return redirect(url_for('usuario_bp.view_usuarios'))
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT id, nome, email, senha FROM usuarios WHERE id = %s;", (id,))
+    usuario = cursor.fetchone()
+
     if not usuario:
-        flash('Você precisa estar logado para acessar seu perfil.', 'warning')
-        return redirect(url_for('auth_bp.login'))
+        flash('Usuário não encontrado.', 'warning')
+        cursor.close()
+        return redirect(url_for('usuario_bp.view_usuarios'))
 
-    return render_template('usuario.html', usuario=usuario)
+    if request.method == 'POST':
+        try:
+            nome = request.form['nome']
+            email = request.form['email']
+            senha = request.form['senha']
 
+            cursor.execute("""
+                UPDATE usuarios
+                SET nome = %s, email = %s, senha = %s
+                WHERE id = %s
+            """, (nome, email, senha, id))
 
+            mysql.connection.commit()
+            cursor.close()
+            flash('Usuário atualizado com sucesso!', 'success')
+            return redirect(url_for('usuario_bp.view_usuarios'))
 
-@usuario_bp.route('/atualizar', methods=['POST'])
-def atualizar():
-    """Atualização simples do perfil (placeholder).
+        except Exception as e:
+            try:
+                mysql.connection.rollback()
+            except:
+                pass
+            flash('Erro ao atualizar usuário: ' + str(e), 'danger')
+            return render_template('edit_usuario.html', usuario=usuario)
 
-    Neste momento apenas valida a sessão e redireciona de volta ao perfil com
-    uma mensagem de sucesso. Se quiser persistir alterações, reintroduzir
-    a lógica de acesso ao banco (`config.mysql`) e validações.
-    """
-    usuario = session.get('usuario')
-    if not usuario:
-        flash('Você precisa estar logado para atualizar suas informações.', 'warning')
-        return redirect(url_for('auth_bp.login'))
-    
-    flash('Informações atualizadas com sucesso!', 'success')
-    return redirect(url_for('usuario_bp.usuarios'))
+    cursor.close()
+    return render_template('edit_usuario.html', usuario=usuario)
+
+@usuario_bp.route('/delete/<int:id>')
+def delete_usuario(id):
+    if not mysql:
+        flash('Erro: conexão com o banco de dados indisponível.', 'danger')
+        return redirect(url_for('usuario_bp.view_usuarios'))
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("DELETE FROM usuarios WHERE id = %s", (id,))
+        mysql.connection.commit()
+        cursor.close()
+        flash('Usuário removido com sucesso!', 'info')
+
+    except Exception as e:
+        try:
+            mysql.connection.rollback()
+        except:
+            pass
+        flash('Erro ao remover usuário: ' + str(e), 'danger')
+
+    return redirect(url_for('usuario_bp.view_usuarios'))
