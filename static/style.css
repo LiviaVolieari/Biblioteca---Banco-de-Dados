@@ -1,0 +1,297 @@
+:root {
+    /* Tons de Marrom e Bege */
+    --bg: #F9F7F3; /* Light Creamy Beige - Fundo principal */
+    --card: #ffffff; /* Branco Puro para cartões e formulários */
+    --primary: #795548; /* Medium Sepia Brown - Destaque principal */
+    --primary-600: #5D4037; /* Deep Coffee Brown - Ações e títulos mais escuros */
+    --muted: #A1887F; /* Lighter Muted Brown - Texto secundário */
+    --text-color: #333333; /* Cor principal do texto */
+    --header-bg: #4E342E; /* Darkest Brown - Cabeçalho e rodapé */
+
+    /* Cores de status ajustadas */
+    --success: #388E3C; 
+    --danger: #D32F2F; 
+    --info: #1976D2; 
+
+    --radius: 8px;
+    --max-width: 1100px;
+}
+
+{
+    box-sizing: border-box;
+}
+
+body {
+    /* Fonte clássica e cor de fundo */
+    font-family: 'Georgia', serif;
+    margin: 0;
+    color: var(--text-color);
+    background-color: var(--bg);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* -------------------------
+   Cabeçalho e Navegação
+   ------------------------- */
+
+header {
+    background-color: var(--header-bg);
+    color: white;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Sombra mais marcada */
+    text-align: center;
+}
+
+/* Novo estilo para a imagem do logo */
+.logo-container {
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+    font-weight: 400;
+    margin: 0;
+    font-size: 0; /* Remove o espaço de texto desnecessário */
+    letter-spacing: 1px;
+}
+
+.header-logo {
+    width: 200px; /* Tamanho padrão desktop */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+nav {
+    margin-top: 1rem;
+}
+
+nav a{
+    color: #F8F4E3; /* Bege muito claro para alto contraste */
+    margin: 0 12px;
+    padding: 5px 10px;
+    text-decoration: none;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav a:hover {
+    color: var(--primary); /* Sepia Brown */
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* -------------------------
+   Layout e Containers
+   ------------------------- */
+
+main {
+    flex-grow: 1;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.card, .form-container {
+    background-color: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra suave */
+    border: 1px solid #E0DED7; /* Borda sutil */
+}
+
+.form-container {
+    max-width: 520px;
+    margin: 22px auto;
+}
+
+.form-container h2 {
+    margin-top: 0;
+    text-align: center;
+    color: var(--primary-600);
+}
+
+/* -------------------------
+   Estilos específicos da Página Inicial
+   ------------------------- */
+.welcome-card {
+    max-width: 600px; /* Limita a largura do cartão de boas-vindas */
+    margin: 40px auto;
+    text-align: center;
+    padding: 30px;
+}
+
+.welcome-card h1 {
+    font-size: 2.5rem;
+    color: var(--primary-600);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.welcome-card p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.action-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Espaçamento entre os botões */
+    margin-top: 30px;
+}
+
+/* Garante que os links dentro do .action-links se pareçam com botões */
+.action-links .btn {
+    width: auto; /* Deixa o botão se ajustar ao conteúdo */
+    min-width: 180px;
+    text-align: center;
+    text-decoration: none;
+    padding: 14px 20px;
+    font-size: 1rem;
+}
+
+/* -------------------------
+   Formulários e Inputs
+   ------------------------- */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+input[type="text"], input[type="password"], input[type="number"], input[type="email"], textarea, select {
+    padding: 12px;
+    border: 1px solid #D7C3A9; /* Borda bege clara */
+    border-radius: 6px;
+    background: var(--bg);
+    font-size: 16px;
+    color: var(--text-color);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary); /* Sepia Brown no foco */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(121, 85, 72, 0.2); /* Sombra suave de foco */
+    background-color: var(--card);
+}
+
+label {
+    font-size: 14px;
+    color: var(--primary-600); /* Dark Brown label */
+    font-weight: 600;
+}
+
+/* -------------------------
+   Botões
+   ------------------------- */
+
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 6px;
+    background-color: var(--primary-600); /* Deep Coffee Brown */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:hover {
+    background-color: var(--primary); /* Sepia Brown on hover */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn.secondary { 
+    background-color: #EFEBE9; /* Bege claro de fundo */
+    color: var(--primary-600);
+    border: 1px solid var(--muted);
+}
+.btn.secondary:hover { 
+    background-color: #D7CCC8;
+}
+
+/* -------------------------
+   Tabelas
+   ------------------------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: var(--card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+th {
+    text-align: left;
+    padding: 14px 16px;
+    background-color: #F7F5F0; /* Bege claro para o cabeçalho */
+    color: var(--primary-600);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 14px 16px; 
+    border-top: 1px solid #EAE0D7; /* Linha divisória suave */
+    font-size: 15px;
+}
+
+tr:nth-child(even) td{
+    background: #FDFCF8; /* Linhas alternadas sutis */
+}
+
+/* -------------------------
+   Mensagens de Flash
+   ------------------------- */
+
+.flash {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+.flash.success{
+    background: #E8F5E9; 
+    color: var(--success);
+    border-color: var(--success);
+}
+.flash.danger{
+    background: #FFEBEE; 
+    color: var(--danger);
+    border-color: var(--danger);
+}
+.flash.info{
+    background: #E3F2FD; 
+    color: var(--info);
+    border-color: var(--info);
+}
+
+/* -------------------------
+   Rodapé
+   ------------------------- */
+
+footer {
+    background-color: var(--header-bg);
+    color: #EFEBE9; 
+    text-align: center;
+    padding: 20px 8px;
+    margin-top: auto; /* Garante que fique no fundo da página */
+    font-size: 14px;
+}

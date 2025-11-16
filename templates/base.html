@@ -7,7 +7,9 @@
 </head>
 <body>
     <header>
-        <h1>Biblioteca 2M</h1>
+        <h1 class="logo-container">
+          <img src="{{ url_for('static', filename='Logo.png') }}" alt="Logo Biblioteca 2M" class="header-logo">
+        </h1>
         <nav>
             <a href="{{ url_for('main_bp.index') }}">Início</a>
             <a href="{{ url_for('auth_bp.login') }}">Login</a>
