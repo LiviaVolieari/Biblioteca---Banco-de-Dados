@@ -17,7 +17,7 @@
     --max-width: 1100px;
 }
 
-{
+* {
     box-sizing: border-box;
 }
 
