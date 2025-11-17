@@ -4,12 +4,14 @@
 
 {% block content %}
     <div class="container">
-        <h1>Bem-vindo à Biblioteca LIFT</h1>
-        <p>Por favor, escolha uma das opções para continuar:</p>
+        <div class="welcome-card card"> 
+            <h1>Bem-vindo à Biblioteca 2M</h1>
+            <p>Por favor, escolha uma das opções para continuar:</p>
 
-        <ul>
-            <li><a href="{{ url_for('auth_bp.login') }}">Fazer Login</a></li>
-            <li><a href="{{ url_for('auth_bp.register') }}">Cadastrar Usuário</a></li>
-        </ul>
+            <div class="action-links">
+                <a href="{{ url_for('login') }}" class="btn">Fazer Login</a>
+                <a href="{{ url_for('register') }}" class="btn secondary">Cadastrar Usuário</a>
+            </div>
+        </div>
     </div>
 {% endblock %}
