@@ -107,6 +107,6 @@ def delete_genero(id_genero):
 
     except Exception as e:
         mysql.connection.rollback()
-        flash('Erro ao remover gênero: ' + str(e), 'danger')
+        flash('Erro ao remover gênero ', 'danger')
 
     return redirect(url_for('genero_bp.view_generos'))

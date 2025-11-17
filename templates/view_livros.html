@@ -29,8 +29,8 @@
                 <td>{{ livro.isbn }}</td>
                 <td>{{ livro.quantidade }}</td>
                 <td>
-                    <a href="{{ url_for('livro_bp.edit_livro', id=livro.id) }}">Editar</a>
-                    <a href="{{ url_for('livro_bp.delete_livro', id=livro.id) }}" onclick="return confirm('Tem certeza que deseja excluir este livro?')">Excluir</a>
+                    <a href="{{ url_for('livro_bp.edit_livro', id=livro.id) }}" class="view-btn">Editar</a>
+                    <a href="{{ url_for('livro_bp.delete_livro', id=livro.id) }}" onclick="return confirm('Tem certeza que deseja excluir este livro?')" class="view-btn">Excluir</a>
                 </td>
             </tr>
 

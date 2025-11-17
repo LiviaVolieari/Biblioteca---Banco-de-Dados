@@ -89,6 +89,6 @@ def delete_editora(id_editora):
 
     except Exception as e:
         mysql.connection.rollback()
-        flash('Erro ao remover editora: ' + str(e), 'danger')
+        flash('Erro ao remover editora ', 'danger')
 
     return redirect(url_for('editora_bp.view_editoras'))

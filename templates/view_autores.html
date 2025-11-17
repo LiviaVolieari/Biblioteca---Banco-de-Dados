@@ -23,8 +23,8 @@
                 <td>{{ autor.data_nascimento or '-' }}</td>
                 <td>{{ autor.biografia[:50] ~ '...' if autor.biografia else '-' }}</td>
                 <td>
-                    <a href="{{ url_for('autor_bp.edit_autor', id_autor=autor.id_autor) }}">Editar</a>
-                    <a href="{{ url_for('autor_bp.delete_autor', id_autor=autor.id_autor) }}" onclick="return confirm('Excluir este autor?')">Excluir</a>
+                    <a href="{{ url_for('autor_bp.edit_autor', id_autor=autor.id_autor) }}" class="view-btn">Editar</a>
+                    <a href="{{ url_for('autor_bp.delete_autor', id_autor=autor.id_autor) }}" onclick="return confirm('Excluir este autor?')" class="view-btn">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

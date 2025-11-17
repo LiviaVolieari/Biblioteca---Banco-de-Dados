@@ -19,8 +19,8 @@
                 <td>{{ genero.id_genero }}</td>
                 <td>{{ genero.nome_genero }}</td>
                 <td>
-                    <a href="{{ url_for('genero_bp.edit_genero', id_genero=genero.id_genero) }}">Editar</a>
-                    <a href="{{ url_for('genero_bp.delete_genero', id_genero=genero.id_genero) }}" onclick="return confirm('Tem certeza que deseja excluir este gênero?')">Excluir</a>
+                    <a href="{{ url_for('genero_bp.edit_genero', id_genero=genero.id_genero) }}" class="view-btn">Editar</a>
+                    <a href="{{ url_for('genero_bp.delete_genero', id_genero=genero.id_genero) }}" onclick="return confirm('Tem certeza que deseja excluir este gênero?')" class="view-btn">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

@@ -76,6 +76,6 @@ def delete_usuario(id):
             mysql.connection.rollback()
         except:
             pass
-        flash('Erro ao remover usuário: ' + str(e), 'danger')
+        flash('Erro ao remover usuário', 'danger')
 
     return redirect(url_for('usuario_bp.view_usuarios'))

@@ -234,7 +234,7 @@ def delete_livro(id):
             cursor.close()
         except Exception:
             pass
-        flash('Erro ao remover livro: ' + str(e), 'danger')
+        flash('Erro ao remover livro ', 'danger')
 
     return redirect(url_for('livro_bp.view_livros'))
 

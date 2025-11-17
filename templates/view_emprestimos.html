@@ -27,8 +27,8 @@
                 <td>{{ e.data_devolucao_real or '-' }}</td>
                 <td>{{ e.status_emprestimo }}</td>
                 <td>
-                    <a href="{{ url_for('emprestimo_bp.edit_emprestimo', id=e.id_emprestimo) }}">Editar</a>
-                    <a href="{{ url_for('emprestimo_bp.delete_emprestimo', id=e.id_emprestimo) }}" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?')">Excluir</a>
+                    <a href="{{ url_for('emprestimo_bp.edit_emprestimo', id=e.id_emprestimo) }}" class="view-btn">Editar</a>
+                    <a href="{{ url_for('emprestimo_bp.delete_emprestimo', id=e.id_emprestimo) }}" onclick="return confirm('Tem certeza que deseja excluir este empréstimo?')" class="view-btn">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

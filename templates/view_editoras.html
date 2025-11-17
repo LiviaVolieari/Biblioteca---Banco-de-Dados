@@ -19,8 +19,8 @@
                 <td>{{ e.nome_editora }}</td>
                 <td>{{ e.endereco_editora or '—' }}</td>
                 <td>
-                    <a href="{{ url_for('editora_bp.edit_editora', id_editora=e.id_editora) }}">Editar</a> |
-                    <a href="{{ url_for('editora_bp.delete_editora', id_editora=e.id_editora) }}" onclick="return confirm('Tem certeza que deseja excluir esta editora?')">Excluir</a>
+                    <a href="{{ url_for('editora_bp.edit_editora', id_editora=e.id_editora) }}" class="view-btn">Editar</a> 
+                    <a href="{{ url_for('editora_bp.delete_editora', id_editora=e.id_editora) }}" onclick="return confirm('Tem certeza que deseja excluir esta editora?')" class="view-btn">Excluir</a>
                 </td>
             </tr>
             {% endfor %}
