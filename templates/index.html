@@ -5,6 +5,9 @@
 {% block content %}
     <div class="container">
         <div class="welcome-card card"> 
+            {% if current_user.is_authenticated %}
+                <span class="user">Olá, {{ current_user.nome }}</span>
+            {% endif %}
             <h1>Bem-vindo à Biblioteca 2M</h1>
             <p>Por favor, escolha uma das opções para continuar:</p>
 

@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_login import LoginManager
 from flask_mysqldb import MySQL
 import os
 
@@ -13,7 +14,14 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'chave_super_segura')  
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'chave_super_segura')
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'auth_bp.login'
+login_manager.login_message = 'Você precisa estar logado para acessar esta página.'
+login_manager.login_message_category = 'warning'
+
 
 
 app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', 'localhost')
@@ -39,6 +47,26 @@ except Exception as e:
     print('   mysql -u root -p < database/schema.sql')
     print('\nDetalhes do erro:', str(e))
     mysql = None
+
+from models.user import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    if not mysql:
+        return None
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "SELECT id, nome, email FROM usuarios WHERE id = %s",
+        (user_id,)
+    )
+    user = cursor.fetchone()
+    cursor.close()
+
+    if user:
+        return User(user['id'], user['nome'], user['email'])
+    return None
+
 
 from controllers.main.routes import main_bp
 from controllers.auth.routes import auth_bp

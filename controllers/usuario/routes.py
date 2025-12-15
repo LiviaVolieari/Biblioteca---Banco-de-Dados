@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask_login import login_required
 from config import mysql
 
 usuario_bp = Blueprint('usuario_bp', __name__)
 
 @usuario_bp.route('/')
+@login_required
 def view_usuarios():
     if not mysql:
         flash('Atenção: conexão com o banco de dados indisponível.', 'warning')
@@ -16,6 +18,7 @@ def view_usuarios():
     return render_template('view_usuarios.html', usuarios=usuarios)
 
 @usuario_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_usuario(id):
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
@@ -59,6 +62,7 @@ def edit_usuario(id):
     return render_template('edit_usuario.html', usuario=usuario)
 
 @usuario_bp.route('/delete/<int:id>')
+@login_required
 def delete_usuario(id):
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
