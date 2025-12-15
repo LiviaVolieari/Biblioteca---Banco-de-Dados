@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from config import mysql
+from flask_login import login_user, logout_user
+from models.user import User
+
 
 auth_bp = Blueprint('auth_bp', __name__)
 
@@ -28,8 +31,8 @@ def login():
             return render_template('login.html')
 
         if user:
-            session['usuario_id'] = user['id']
-            session['usuario'] = user['nome']
+            usuario = User(user['id'], user['nome'], user['email'])
+            login_user(usuario)
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('main_bp.index'))
         else:
@@ -66,3 +69,10 @@ def register():
         return redirect(url_for('auth_bp.login'))
 
     return render_template('register.html')
+
+
+@auth_bp.route('/logout')
+def logout():
+    logout_user()
+    flash('Logout realizado com sucesso!', 'info')
+    return redirect(url_for('auth_bp.login'))

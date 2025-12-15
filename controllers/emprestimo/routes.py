@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask_login import login_required
+
 from config import mysql
 
 emprestimo_bp = Blueprint('emprestimo_bp', __name__)
 
 @emprestimo_bp.route('/')
+@login_required
 def view_emprestimos():
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
@@ -71,6 +74,7 @@ def add_emprestimo():
     return render_template('add_emprestimo.html', usuarios=usuarios, livros=livros)
 
 @emprestimo_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
+
 def edit_emprestimo(id):
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
@@ -118,6 +122,7 @@ def edit_emprestimo(id):
     return render_template('edit_emprestimo.html', emprestimo=emprestimo, usuarios=usuarios, livros=livros)
 
 @emprestimo_bp.route('/delete/<int:id>')
+
 def delete_emprestimo(id):
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
