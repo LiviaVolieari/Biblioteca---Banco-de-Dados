@@ -59,3 +59,135 @@ CREATE TABLE IF NOT EXISTS emprestimos (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (livro_id) REFERENCES livros(id)
 );
+
+
+-- ADIÇÃO NA TABELA USUÁRIOS PARA AJUDAR OS TRIGGER
+ALTER TABLE usuarios
+ADD status ENUM('ativo', 'inativo') DEFAULT 'ativo';
+
+
+-- CRIAÇÃO DE FUNÇÕES DE APOIO
+-- primeira função – Verificar se o usuário tem empréstimos atrasados
+
+DELIMITER //
+CREATE FUNCTION usuario_tem_atraso(p_usuario_id INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE qtd INT;
+    SELECT COUNT(*) INTO qtd
+    FROM emprestimos
+    WHERE usuario_id = p_usuario_id
+      AND status_emprestimo = 'atrasado';
+
+    RETURN qtd > 0;
+END//
+DELIMITER ;
+
+
+-- segunda função – Verificar disponibilidade do livro
+DELIMITER //
+CREATE FUNCTION livro_disponivel(p_livro_id INT)
+RETURNS BOOLEAN
+DETERMINISTIC
+BEGIN
+    DECLARE qtd INT;
+    SELECT quantidade INTO qtd
+    FROM livros
+    WHERE id = p_livro_id;
+    RETURN qtd > 0;
+END//
+DELIMITER ;
+
+-- CRIAÇÃO DE PROCEDIMENTO DE APOIO
+DELIMITER //
+CREATE PROCEDURE validar_datas(
+    IN p_data_emp DATE,
+    IN p_data_prev DATE
+)
+BEGIN
+    IF p_data_prev <= p_data_emp THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Data de devolução deve ser posterior à data de empréstimo';
+    END IF;
+END//
+DELIMITER ;
+
+
+-- ** GATILHOS **
+
+-- Bloquear empréstimo se o usuário estiver INATIVO
+
+DELIMITER //
+CREATE TRIGGER validar_atividadeusuario
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    DECLARE situacao ENUM('ativo', 'inativo');
+    SELECT status INTO situacao
+    FROM usuarios
+    WHERE id = NEW.usuario_id;
+    IF situacao = 'inativo' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Usuário inativo não pode realizar empréstimos';
+    END IF;
+END//
+DELIMITER ;
+
+-- Impedir empréstimo se o usuário tiver com um livro em atraso
+
+DELIMITER //
+CREATE TRIGGER bloquear_usuarioatraso
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF usuario_tem_atraso(NEW.usuario_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Usuário possui empréstimos em atraso';
+    END IF;
+END//
+DELIMITER ;
+
+
+-- Impedir empréstimo se o livro estiver indisponível
+DELIMITER //
+CREATE TRIGGER validar_disponibilidade_livro
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF NOT livro_disponivel(NEW.livro_id) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Livro indisponível para empréstimo';
+    END IF;
+END//
+DELIMITER ;
+
+-- Validar datas do empréstimo
+DELIMITER //
+CREATE TRIGGER validar_datas_emprestimo
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    CALL validar_datas(
+        NEW.data_emprestimo,
+        NEW.data_devolucao_prevista
+    );
+END//
+DELIMITER ;
+
+-- Impedir cadastro de ISBN duplicado
+DELIMITER //
+CREATE TRIGGER bloquear_isbn_duplicado
+BEFORE INSERT ON livros
+FOR EACH ROW
+BEGIN
+    DECLARE qtd INT;
+    SELECT COUNT(*) INTO qtd
+    FROM livros
+    WHERE isbn = NEW.isbn;
+    IF qtd > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'ISBN já cadastrado no sistema';
+    END IF;
+END//
+DELIMITER ;

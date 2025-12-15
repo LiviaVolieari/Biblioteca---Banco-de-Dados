@@ -28,6 +28,7 @@ def login():
             return render_template('login.html')
 
         if user:
+            session['usuario_id'] = user['id']
             session['usuario'] = user['nome']
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('main_bp.index'))

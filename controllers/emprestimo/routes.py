@@ -49,6 +49,11 @@ def add_emprestimo():
             data_emprestimo = request.form['data_emprestimo']
             data_devolucao_prevista = request.form['data_devolucao_prevista']
             status = request.form['status_emprestimo']
+            if status not in ['pendente', 'devolvido', 'atrasado']:
+                flash(
+                    'Status inválido informado. O sistema ajustou automaticamente.',
+                    'warning'
+                ) #MUDEI
 
             cursor.execute("""
                 INSERT INTO emprestimos (usuario_id, livro_id, data_emprestimo, data_devolucao_prevista, status_emprestimo)
@@ -60,7 +65,7 @@ def add_emprestimo():
             return redirect(url_for('emprestimo_bp.view_emprestimos'))
         except Exception as e:
             mysql.connection.rollback()
-            flash(f'Erro ao registrar empréstimo: {e}', 'danger')
+            flash(str(e), 'danger') #TAVA FEIO
 
     cursor.close()
     return render_template('add_emprestimo.html', usuarios=usuarios, livros=livros)
@@ -107,7 +112,7 @@ def edit_emprestimo(id):
             return redirect(url_for('emprestimo_bp.view_emprestimos'))
         except Exception as e:
             mysql.connection.rollback()
-            flash(f'Erro ao atualizar empréstimo: {e}', 'danger')
+            flash(str(e), 'danger')
 
     cursor.close()
     return render_template('edit_emprestimo.html', emprestimo=emprestimo, usuarios=usuarios, livros=livros)
@@ -125,7 +130,7 @@ def delete_emprestimo(id):
         flash('Empréstimo excluído com sucesso!', 'info')
     except Exception as e:
         mysql.connection.rollback()
-        flash(f'Erro ao excluir empréstimo: {e}', 'danger')
+        flash(str(e), 'danger')
     finally:
         cursor.close()
 
