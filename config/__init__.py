@@ -27,7 +27,7 @@ login_manager.login_message_category = 'warning'
 app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST', 'localhost')
 app.config['MYSQL_PORT'] = int(os.environ.get('MYSQL_PORT', 3306))
 app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', '')  # a senha é definida aqui
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', '1234')  # a senha é definida aqui
 app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB', 'biblioteca')
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
@@ -76,7 +76,9 @@ from controllers.genero.routes import genero_bp
 from controllers.emprestimo.routes import emprestimo_bp
 from controllers.usuario.routes import usuario_bp
 from controllers.editora.routes import editora_bp
+from controllers.logs.routes import logs_bp
 
+app.register_blueprint(logs_bp)
 app.register_blueprint(editora_bp, url_prefix='/editoras')
 app.register_blueprint(usuario_bp, url_prefix='/usuarios')
 app.register_blueprint(main_bp)

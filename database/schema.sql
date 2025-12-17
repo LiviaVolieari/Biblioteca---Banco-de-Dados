@@ -60,6 +60,16 @@ CREATE TABLE IF NOT EXISTS emprestimos (
     FOREIGN KEY (livro_id) REFERENCES livros(id)
 );
 
+CREATE TABLE auditoria_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tabela_afetada VARCHAR(50),
+    operacao ENUM('INSERT', 'UPDATE', 'DELETE'),
+    usuario_responsavel INT,
+    data_operacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    dados_anteriores TEXT,
+    dados_novos TEXT
+);
+
 
 -- ADIÇÃO NA TABELA USUÁRIOS PARA AJUDAR OS TRIGGER
 ALTER TABLE usuarios
@@ -110,6 +120,16 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Data de devolução deve ser posterior à data de empréstimo';
     END IF;
+END//
+DELIMITER ;
+
+-- Capturar Usuário Atual
+DELIMITER //
+CREATE FUNCTION usuario_atual()
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    RETURN 1; -- usuário logado (simulado)
 END//
 DELIMITER ;
 
@@ -191,3 +211,117 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+
+-- Auditoria de INSERT em usuários
+
+DELIMITER //
+CREATE TRIGGER auditoria_insert_usuario
+AFTER INSERT ON usuarios
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_logs (
+        tabela_afetada, operacao, usuario_responsavel, dados_novos
+    )
+    VALUES (
+        'usuarios',
+        'INSERT',
+        usuario_atual(),
+        CONCAT('Nome: ', NEW.nome, ' Email: ', NEW.email)
+    );
+END//
+DELIMITER ;
+
+-- Auditoria de UPDATE em usuários
+
+-- **** não fucionar, vou ajeitar dps****
+DELIMITER //
+CREATE TRIGGER tg_auditoria_update_usuario
+AFTER UPDATE ON usuarios
+FOR EACH ROW
+BEGIN
+    IF OLD.status != NEW.status THEN
+        INSERT INTO auditoria_logs (
+             tabela_afetada,
+             operacao,
+             usuario_responsavel,
+             dados_anteriores,
+             dados_novos
+         ) VALUES (
+             'usuarios',
+             'UPDATE',
+             NULL,
+             CONCAT('Status anterior: ', IFNULL(OLD.status, 'NULO')),
+             CONCAT('Status novo: ', IFNULL(NEW.status, 'NULO'))
+         );
+     END IF;
+ END;
+ //
+DELIMITER ;
+
+-- Auditoria de INSERT em empréstimos
+DELIMITER //
+CREATE TRIGGER auditoria_insert_emprestimo
+AFTER INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_logs (
+        tabela_afetada, operacao, usuario_responsavel, dados_novos
+    )
+    VALUES (
+        'emprestimos',
+        'INSERT',
+        usuario_atual(),
+        CONCAT(
+            'Usuário: ', NEW.usuario_id,
+            ' Livro: ', NEW.livro_id,
+            ' Data empréstimo: ', NEW.data_emprestimo
+        )
+    );
+END//
+DELIMITER ;
+
+-- Auditoria de UPDATE em empréstimos
+DELIMITER //
+CREATE TRIGGER auditoria_update_emprestimo
+AFTER UPDATE ON emprestimos
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_logs (
+        tabela_afetada, operacao, usuario_responsavel,
+        dados_anteriores, dados_novos
+    )
+    VALUES (
+        'emprestimos',
+        'UPDATE',
+        usuario_atual(),
+        CONCAT('Status anterior: ', OLD.status_emprestimo),
+        CONCAT('Status novo: ', NEW.status_emprestimo)
+    );
+END//
+DELIMITER ;
+
+-- Auditoria de DELETE em livros 
+
+-- **** não fucionar, vou ajeitar dps****
+DELIMITER //
+CREATE TRIGGER auditoria_delete_livro
+AFTER DELETE ON livros
+FOR EACH ROW
+BEGIN
+    INSERT INTO auditoria_logs (
+        tabela_afetada, operacao, usuario_responsavel, dados_anteriores
+    )
+    VALUES (
+        'livros',
+        'DELETE',
+        usuario_atual(),
+        CONCAT(
+            'Livro removido: ', OLD.titulo,
+            ' ISBN: ', OLD.isbn
+        )
+    );
+END//
+DELIMITER ;
+
+

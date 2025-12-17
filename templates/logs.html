@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Logs de Auditoria{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2>Logs de Auditoria do Sistema</h2>
+
+        {% if logs %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Tabela</th>
+                    <th>Operação</th>
+                    <th>Usuário</th>
+                    <th>Data</th>
+                    <th>Dados Anteriores</th>
+                    <th>Dados Novos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.tabela_afetada }}</td>
+                    <td>{{ log.operacao }}</td>
+                    <td>{{ log.usuario_nome or 'Sistema' }}</td>
+                    <td>{{ log.data_operacao }}</td>
+                    <td>{{ log.dados_anteriores or '-' }}</td>
+                    <td>{{ log.dados_novos or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>Nenhum log de auditoria encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
