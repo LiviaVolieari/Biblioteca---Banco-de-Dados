@@ -17,8 +17,10 @@
                 <td>{{ usuario.nome }}</td>
                 <td>{{ usuario.email }}</td>
                 <td>
-                    <a href="{{ url_for('usuario_bp.edit_usuario', id=usuario.id) }}" class="view-btn">Editar</a>
-                    <a href="{{ url_for('usuario_bp.delete_usuario', id=usuario.id) }}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" class="view-btn">Excluir</a>
+                    {% if current_user.id == usuario.id %}
+                        <a href="{{ url_for('usuario_bp.edit_usuario', id=usuario.id) }}" class="view-btn">Editar</a>
+                        <a href="{{ url_for('usuario_bp.delete_usuario', id=usuario.id) }}" onclick="return confirm('Tem certeza que deseja excluir este usuário?')" class="view-btn">Excluir</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

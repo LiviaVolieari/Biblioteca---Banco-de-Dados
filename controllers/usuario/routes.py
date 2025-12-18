@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
-from flask_login import login_required
+from flask_login import login_required, current_user
 from config import mysql
 
 usuario_bp = Blueprint('usuario_bp', __name__)
@@ -20,12 +20,19 @@ def view_usuarios():
 @usuario_bp.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_usuario(id):
+    if current_user.id != id:
+        flash('Você só pode editar o seu próprio perfil.', 'danger')
+        return redirect(url_for('usuario_bp.view_usuarios'))
+
     if not mysql:
         flash('Erro: conexão com o banco de dados indisponível.', 'danger')
         return redirect(url_for('usuario_bp.view_usuarios'))
 
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT id, nome, email, senha FROM usuarios WHERE id = %s;", (id,))
+    cursor.execute(
+        "SELECT id, nome, email, senha FROM usuarios WHERE id = %s;",
+        (id,)
+    )
     usuario = cursor.fetchone()
 
     if not usuario:
@@ -47,6 +54,7 @@ def edit_usuario(id):
 
             mysql.connection.commit()
             cursor.close()
+
             flash('Usuário atualizado com sucesso!', 'success')
             return redirect(url_for('usuario_bp.view_usuarios'))
 
@@ -55,6 +63,7 @@ def edit_usuario(id):
                 mysql.connection.rollback()
             except:
                 pass
+
             flash('Erro ao atualizar usuário: ' + str(e), 'danger')
             return render_template('edit_usuario.html', usuario=usuario)
 
@@ -64,8 +73,9 @@ def edit_usuario(id):
 @usuario_bp.route('/delete/<int:id>')
 @login_required
 def delete_usuario(id):
-    if not mysql:
-        flash('Erro: conexão com o banco de dados indisponível.', 'danger')
+
+    if current_user.id != id:
+        flash('Você não pode excluir outro usuário.', 'danger')
         return redirect(url_for('usuario_bp.view_usuarios'))
 
     try:
@@ -75,11 +85,9 @@ def delete_usuario(id):
         cursor.close()
         flash('Usuário removido com sucesso!', 'info')
 
-    except Exception as e:
-        try:
-            mysql.connection.rollback()
-        except:
-            pass
-        flash('Erro ao remover usuário', 'danger')
+    except Exception:
+        mysql.connection.rollback()
+        flash('Erro ao remover usuário.', 'danger')
 
     return redirect(url_for('usuario_bp.view_usuarios'))
+
