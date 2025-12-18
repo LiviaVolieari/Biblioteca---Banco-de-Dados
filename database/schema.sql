@@ -101,13 +101,26 @@ CREATE FUNCTION livro_disponivel(p_livro_id INT)
 RETURNS BOOLEAN
 DETERMINISTIC
 BEGIN
-    DECLARE qtd INT;
-    SELECT quantidade INTO qtd
+    DECLARE qtd_total INT;
+    DECLARE qtd_emprestados INT;
+
+    -- quantidade cadastrada do livro
+    SELECT quantidade INTO qtd_total
     FROM livros
     WHERE id = p_livro_id;
-    RETURN qtd > 0;
+
+    -- quantos estão emprestados (ativos)
+    SELECT COUNT(*) INTO qtd_emprestados
+    FROM emprestimos
+    WHERE livro_id = p_livro_id
+      AND status_emprestimo = 'pendente';
+
+    RETURN (qtd_total - qtd_emprestados) > 0;
 END//
 DELIMITER ;
+
+
+
 
 -- CRIAÇÃO DE PROCEDIMENTO DE APOIO
 DELIMITER //
@@ -213,6 +226,8 @@ END//
 DELIMITER ;
 
 
+
+
 -- Auditoria de INSERT em usuários
 
 DELIMITER //
@@ -234,30 +249,37 @@ DELIMITER ;
 
 -- Auditoria de UPDATE em usuários
 
--- **** não fucionar, vou ajeitar dps****
 DELIMITER //
 CREATE TRIGGER tg_auditoria_update_usuario
 AFTER UPDATE ON usuarios
 FOR EACH ROW
 BEGIN
-    IF OLD.status != NEW.status THEN
-        INSERT INTO auditoria_logs (
-             tabela_afetada,
-             operacao,
-             usuario_responsavel,
-             dados_anteriores,
-             dados_novos
-         ) VALUES (
-             'usuarios',
-             'UPDATE',
-             NULL,
-             CONCAT('Status anterior: ', IFNULL(OLD.status, 'NULO')),
-             CONCAT('Status novo: ', IFNULL(NEW.status, 'NULO'))
-         );
-     END IF;
- END;
- //
+    INSERT INTO auditoria_logs (
+        tabela_afetada,
+        operacao,
+        usuario_responsavel,
+        dados_anteriores,
+        dados_novos
+    ) VALUES (
+        'usuarios',
+        'UPDATE',
+        usuario_atual(),
+        CONCAT(
+            'Nome: ', OLD.nome,
+            ' | Email: ', OLD.email,
+            ' | Status: ', OLD.status
+        ),
+        CONCAT(
+            'Nome: ', NEW.nome,
+            ' | Email: ', NEW.email,
+            ' | Status: ', NEW.status
+        )
+    );
+END//
 DELIMITER ;
+
+
+
 
 -- Auditoria de INSERT em empréstimos
 DELIMITER //
@@ -303,7 +325,6 @@ DELIMITER ;
 
 -- Auditoria de DELETE em livros 
 
--- **** não fucionar, vou ajeitar dps****
 DELIMITER //
 CREATE TRIGGER auditoria_delete_livro
 AFTER DELETE ON livros
@@ -325,3 +346,11 @@ END//
 DELIMITER ;
 
 
+INSERT INTO livros (titulo, quantidade)
+VALUES ('Dom Casmurro', 1);
+
+INSERT INTO emprestimos (
+    usuario_id, livro_id, data_emprestimo,
+    data_devolucao_prevista, status_emprestimo
+)
+VALUES (1, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'pendente');
