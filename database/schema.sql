@@ -354,3 +354,113 @@ INSERT INTO emprestimos (
     data_devolucao_prevista, status_emprestimo
 )
 VALUES (1, 2, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), 'pendente');
+
+
+-- Geração Automática de Valores
+
+-- 1
+DELIMITER //
+
+CREATE TRIGGER trg_log_devolucao
+AFTER UPDATE ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF OLD.status_emprestimo <> 'devolvido'
+       AND NEW.status_emprestimo = 'devolvido' THEN
+
+        INSERT INTO logs (descricao, data_log)
+        VALUES (
+            CONCAT(
+                'Empréstimo finalizado: usuário ',
+                NEW.usuario_id,
+                ' devolveu o livro ',
+                NEW.livro_id
+            ),
+            NOW()
+        );
+    END IF;
+END//
+
+DELIMITER ;
+
+CREATE TABLE logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(255) NOT NULL,
+    data_log DATETIME NOT NULL
+);
+
+SELECT * FROM logs;
+
+
+-- 2
+
+DELIMITER //
+
+CREATE TRIGGER trg_usuario_data_cadastro
+BEFORE INSERT ON usuarios
+FOR EACH ROW
+BEGIN
+    IF NEW.data_cadastro IS NULL THEN
+        SET NEW.data_cadastro = NOW();
+    END IF;
+END//
+
+DELIMITER ;
+
+ALTER TABLE usuarios
+ADD data_cadastro DATETIME;
+
+INSERT INTO usuarios (nome, email, senha)
+VALUES ('Teste User', 'teste@email.com', '123');
+
+SELECT nome, data_cadastro FROM usuarios
+WHERE email = 'teste@email.com';
+
+
+-- 3
+
+DELIMITER //
+
+CREATE TRIGGER trg_livro_quantidade_padrao
+BEFORE INSERT ON livros
+FOR EACH ROW
+BEGIN
+    IF NEW.quantidade IS NULL OR NEW.quantidade < 1 THEN
+        SET NEW.quantidade = 1;
+    END IF;
+END//
+
+DELIMITER ;
+
+select * from livros;
+
+
+-- 4
+
+DELIMITER //
+
+CREATE TRIGGER trg_emprestimo_status_padrao
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.status_emprestimo IS NULL THEN
+        SET NEW.status_emprestimo = 'pendente';
+    END IF;
+END//
+
+DELIMITER ;
+
+-- 5
+DELIMITER //
+
+CREATE TRIGGER trg_emprestimo_data_prevista
+BEFORE INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.data_devolucao_prevista IS NULL THEN
+        SET NEW.data_devolucao_prevista =
+            DATE_ADD(NEW.data_emprestimo, INTERVAL 7 DAY);
+    END IF;
+END//
+
+DELIMITER ;
