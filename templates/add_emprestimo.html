@@ -22,14 +22,16 @@
         <input type="date" name="data_emprestimo" required>
 
         <label>Data de Devolução Prevista:</label>
-        <input type="date" name="data_devolucao_prevista" required>
+        <input type="date" name="data_devolucao_prevista" >
 
         <label>Status:</label>
         <select name="status_emprestimo">
+            <option value="">-- Selecione --</option>
             <option value="pendente">Pendente</option>
             <option value="devolvido">Devolvido</option>
             <option value="atrasado">Atrasado</option>
         </select>
+
 
         <button type="submit" class="btn">Salvar</button>
     </form>
