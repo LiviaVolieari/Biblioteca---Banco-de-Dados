@@ -464,3 +464,32 @@ BEGIN
 END//
 
 DELIMITER ;
+
+--Atualizações automáticas: 
+
+CREATE TABLE IF NOT EXISTS logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(255),
+    data_log DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+--1) diminuir quantidade de livros -- quando houver o empréstimo
+
+DELIMITER //
+
+CREATE TRIGGER trg_diminuir_quantidade_livro_apos_emprestimo
+AFTER INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    UPDATE livros
+    SET quantidade = quantidade - 1
+    WHERE id = NEW.livro_id;
+
+    INSERT INTO logs (descricao)
+    VALUES (
+        CONCAT('Livro ID ', NEW.livro_id, ' teve quantidade reduzida após empréstimo')
+    );
+END//
+
+DELIMITER ;
+
