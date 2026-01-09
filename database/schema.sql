@@ -493,3 +493,25 @@ END//
 
 DELIMITER ;
 
+--2) Quando o livro é devolvido -- aumenta a quantidade
+DELIMITER //
+
+CREATE TRIGGER trg_aumentar_quantidade_livro_apos_devolucao
+AFTER UPDATE ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF OLD.status_emprestimo <> 'devolvido' 
+       AND NEW.status_emprestimo = 'devolvido' THEN
+
+        UPDATE livros
+        SET quantidade = quantidade + 1
+        WHERE id = NEW.livro_id;
+
+        INSERT INTO logs (descricao)
+        VALUES (
+            CONCAT('Livro ID ', NEW.livro_id, ' devolvido e quantidade atualizada')
+        );
+    END IF;
+END//
+
+DELIMITER ;
