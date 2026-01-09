@@ -70,6 +70,13 @@ CREATE TABLE auditoria_logs (
     dados_novos TEXT
 );
 
+CREATE TABLE IF NOT EXISTS logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(255),
+    data_log DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 -- ADIÇÃO NA TABELA USUÁRIOS PARA AJUDAR OS TRIGGER
 ALTER TABLE usuarios
@@ -467,17 +474,13 @@ DELIMITER ;
 
 --Atualizações automáticas: 
 
-CREATE TABLE IF NOT EXISTS logs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    descricao VARCHAR(255),
-    data_log DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+
 
 --1) diminuir quantidade de livros -- quando houver o empréstimo
 
 DELIMITER //
 
-CREATE TRIGGER trg_diminuir_quantidade_livro_apos_emprestimo
+CREATE TRIGGER trg_diminuir_quantidade_apos_emprestimo
 AFTER INSERT ON emprestimos
 FOR EACH ROW
 BEGIN
@@ -493,14 +496,15 @@ END//
 
 DELIMITER ;
 
+
 --2) Quando o livro é devolvido -- aumenta a quantidade
 DELIMITER //
 
-CREATE TRIGGER trg_aumentar_quantidade_livro_apos_devolucao
+CREATE TRIGGER trg_aumentar_quantidade_apos_devolucao
 AFTER UPDATE ON emprestimos
 FOR EACH ROW
 BEGIN
-    IF OLD.status_emprestimo <> 'devolvido' 
+    IF OLD.status_emprestimo <> 'devolvido'
        AND NEW.status_emprestimo = 'devolvido' THEN
 
         UPDATE livros
@@ -515,3 +519,80 @@ BEGIN
 END//
 
 DELIMITER ;
+
+
+--3) excluir emprestimo -- devolve ao estoque
+DELIMITER //
+
+CREATE TRIGGER trg_devolver_apos_delete_emprestimo
+AFTER DELETE ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF OLD.status_emprestimo <> 'devolvido' THEN
+
+        UPDATE livros
+        SET quantidade = quantidade + 1
+        WHERE id = OLD.livro_id;
+
+        INSERT INTO logs (descricao)
+        VALUES (
+            CONCAT('Empréstimo excluído. Livro ID ', OLD.livro_id, ' devolvido ao estoque')
+        );
+    END IF;
+END//
+
+DELIMITER ;
+
+
+--4) sem empréstimos -- inativo
+DELIMITER //
+
+CREATE TRIGGER trg_inativar_usuario_sem_emprestimos
+AFTER UPDATE ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF (
+        SELECT COUNT(*)
+        FROM emprestimos
+        WHERE usuario_id = NEW.usuario_id
+          AND status_emprestimo <> 'devolvido'
+    ) = 0 THEN
+
+        UPDATE usuarios
+        SET status = 'inativo'
+        WHERE id = NEW.usuario_id;
+
+        INSERT INTO logs (descricao)
+        VALUES (
+            CONCAT('Usuário ID ', NEW.usuario_id, ' ficou inativo por não ter empréstimos ativos')
+        );
+    END IF;
+END//
+
+DELIMITER ;
+
+
+--5)Novo empréstimo -- ativo
+DELIMITER //
+
+CREATE TRIGGER trg_ativar_usuario_apos_emprestimo
+AFTER INSERT ON emprestimos
+FOR EACH ROW
+BEGIN
+    IF (SELECT status FROM usuarios WHERE id = NEW.usuario_id) = 'inativo' THEN
+
+        UPDATE usuarios
+        SET status = 'ativo'
+        WHERE id = NEW.usuario_id;
+
+        INSERT INTO logs (descricao)
+        VALUES (
+            CONCAT('Usuário ID ', NEW.usuario_id, ' foi ativado após novo empréstimo')
+        );
+    END IF;
+END//
+
+DELIMITER ;
+
+
+
